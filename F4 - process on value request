@@ -1,0 +1,35 @@
+MODULE f4_ref1_data INPUT.
+
+  DATA: return TYPE TABLE OF ddshretval WITH HEADER LINE,
+        BEGIN OF lt_tab OCCURS 0,
+          werks TYPE werks_d,
+          skica TYPE zskica,
+          ref1  TYPE ztakvap-ref1,
+        END OF lt_tab.
+
+  SELECT * INTO CORRESPONDING FIELDS OF TABLE lt_tab
+    FROM ztakvap
+    WHERE werks = gs_akva-werks AND
+          skica = gs_akva-skica.
+
+  SORT lt_tab BY ref1.
+  DELETE ADJACENT DUPLICATES FROM lt_tab COMPARING ref1.
+
+  CALL FUNCTION 'F4IF_INT_TABLE_VALUE_REQUEST'
+    EXPORTING
+      retfield        = 'REF1'
+      dynpprog        = sy-repid
+      dynpnr          = sy-dynnr
+      dynprofield     = 'SCR_700-REF1'
+      value_org       = 'S'
+      multiple_choice = 'X'
+    TABLES
+      value_tab       = lt_tab
+      return_tab      = return.
+
+  IF sy-subrc = 0.
+    READ TABLE return INDEX 1.
+    scr_700-ref1 = return-fieldval.
+  ENDIF.
+
+ENDMODULE.  
