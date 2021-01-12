@@ -1,0 +1,10 @@
+DATA: l_data TYPE text50.
+GET RUN TIME FIELD t1.
+l_data = ( t1 - t0 ) / 1000.
+SHIFT l_data LEFT DELETING LEADING space.
+CONCATENATE 'VPRS runtime calc.(ms):' l_data INTO l_data.
+CALL FUNCTION 'RSLG_WRITE_SYSLOG_ENTRY'
+  EXPORTING
+    sl_message_area  = 'W1'
+    sl_message_subid = '0'
+    data_word1       = l_data.
