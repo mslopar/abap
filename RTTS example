@@ -1,0 +1,8 @@
+DATA: lo_sdescr TYPE REF TO cl_abap_structdescr,
+      ls_component  TYPE abap_compdescr.
+
+lo_sdescr ?= cl_abap_typedescr=>describe_by_name( 'LFA1' ).
+
+LOOP AT lo_sdescr->components INTO ls_component.
+WRITE: / ls_component-name.
+ENDLOOP.
